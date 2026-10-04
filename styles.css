@@ -1,0 +1,413 @@
+/*
+ * Yahtzee Dice Roller — presentation.
+ *
+ * AI use: Claude (Opus 5) wrote this stylesheet, including the felt-table theme, the flat
+ * CSS dice faces and their pip grid, and the responsive rules; reviewed and edited by hand.
+ */
+
+:root {
+	--felt-dark: #0f3d2e;
+	--felt: #16543f;
+	--felt-light: #1d6b4f;
+	--ivory: #f7f4ec;
+	--ink: #23201b;
+	--gold: #e8b64c;
+	--gold-dark: #c9922d;
+	--rule: #e3ddcc;
+	--muted: #6b6555;
+	--panel: #fffdf7;
+	--shadow: rgba(0, 0, 0, 0.35);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	padding: 2rem 1rem;
+	min-height: 100vh;
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	color: var(--ink);
+	background: radial-gradient(circle at 50% 0%, var(--felt-light), var(--felt) 45%,
+		var(--felt-dark) 100%);
+	background-attachment: fixed;
+}
+
+.app {
+	max-width: 880px;
+	margin: 0 auto;
+	background: var(--ivory);
+	border-radius: 18px;
+	padding: 2rem;
+	box-shadow: 0 18px 40px var(--shadow);
+}
+
+/* ---------- Header ---------- */
+
+.app__header {
+	text-align: center;
+	border-bottom: 3px solid var(--gold);
+	padding-bottom: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.app__header h1 {
+	margin: 0;
+	font-size: clamp(1.7rem, 5vw, 2.3rem);
+	letter-spacing: 0.5px;
+	color: var(--felt-dark);
+}
+
+.tagline {
+	margin: 0.4rem 0 0;
+	color: #5c5749;
+	font-style: italic;
+}
+
+h2 {
+	font-size: 1.15rem;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	color: var(--felt);
+	margin: 0 0 0.75rem;
+}
+
+/* ---------- Instructions ---------- */
+
+.instructions {
+	background: var(--panel);
+	border-left: 5px solid var(--gold);
+	border-radius: 8px;
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.75rem;
+	line-height: 1.55;
+}
+
+.instructions ol {
+	margin: 0.5rem 0;
+	padding-left: 1.25rem;
+}
+
+.instructions li + li {
+	margin-top: 0.3rem;
+}
+
+.instructions .note {
+	margin-bottom: 0;
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+/* ---------- CORS failure demo ---------- */
+
+.cors-demo {
+	background: var(--panel);
+	border-left: 5px solid var(--felt);
+	border-radius: 8px;
+	padding: 1rem 1.25rem;
+	margin-top: 1.75rem;
+	line-height: 1.55;
+}
+
+.cors-demo__result {
+	margin: 0.75rem 0 0;
+	font-size: 0.9rem;
+	color: var(--muted);
+	overflow-wrap: anywhere;
+}
+
+.btn--secondary {
+	color: var(--ivory);
+	background: linear-gradient(180deg, var(--felt-light), var(--felt-dark));
+}
+
+kbd {
+	background: #2f2c26;
+	color: #fff;
+	border-radius: 4px;
+	padding: 0.1rem 0.4rem;
+	font-size: 0.85rem;
+	box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- Dice ---------- */
+
+.dice__row {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 0.9rem;
+	margin-bottom: 1.5rem;
+}
+
+.die-card {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.5rem;
+	background: var(--panel);
+	border: 1px solid var(--rule);
+	border-radius: 12px;
+	padding: 0.75rem 0.6rem;
+	text-align: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.die-card__label {
+	font-weight: 700;
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--felt);
+}
+
+.die-face {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: 4px;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	margin: 0 auto;
+	padding: 12%;
+	background: linear-gradient(155deg, #ffffff 0%, #f3efe4 100%);
+	border: 2px solid #ddd6c3;
+	border-radius: 16px;
+	box-shadow: inset 0 -5px 12px rgba(0, 0, 0, 0.09),
+		inset 0 3px 6px rgba(255, 255, 255, 0.9);
+	transition: transform 0.25s ease;
+}
+
+.die-face.rolling {
+	animation: tumble 0.45s ease;
+}
+
+@keyframes tumble {
+	0%   { transform: rotate(0deg) scale(1); }
+	35%  { transform: rotate(-18deg) scale(1.08); }
+	70%  { transform: rotate(14deg) scale(1.04); }
+	100% { transform: rotate(0deg) scale(1); }
+}
+
+.pip {
+	width: 82%;
+	height: 82%;
+	border-radius: 50%;
+	background: radial-gradient(circle at 34% 30%, #4a453c 0%, var(--ink) 55%, #0c0a07 100%);
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
+	align-self: center;
+	justify-self: center;
+}
+
+/* Pip placement cells */
+.p-tl { grid-area: 1 / 1; }
+.p-tr { grid-area: 1 / 3; }
+.p-ml { grid-area: 2 / 1; }
+.p-mc { grid-area: 2 / 2; }
+.p-mr { grid-area: 2 / 3; }
+.p-bl { grid-area: 3 / 1; }
+.p-br { grid-area: 3 / 3; }
+
+/* ---------- Read-only number fields ---------- */
+
+input[readonly] {
+	width: 100%;
+	padding: 0.45rem 0.6rem;
+	font-family: 'Consolas', 'SF Mono', 'Courier New', monospace;
+	font-size: 1.05rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-align: right;          /* all numbers right justified */
+	color: var(--felt-dark);
+	background: #f0ece0;
+	border: 1px solid #d8d1bf;
+	border-radius: 6px;
+	cursor: default;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+input[readonly]:focus-visible {
+	outline: 2px solid var(--gold);
+	outline-offset: 1px;
+}
+
+/* Brief flash so the eye catches which numbers just changed. */
+input[readonly].updated {
+	animation: flash 0.7s ease;
+}
+
+@keyframes flash {
+	0%   { background: var(--gold); border-color: var(--gold-dark); }
+	100% { background: #f0ece0; border-color: #d8d1bf; }
+}
+
+.summary {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+	padding: 1rem;
+	background: #f4f1e7;
+	border: 1px solid var(--rule);
+	border-radius: 12px;
+	margin-bottom: 1rem;
+}
+
+.summary__item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.summary__item label {
+	font-weight: 700;
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--felt);
+}
+
+/* ---------- Result callout ---------- */
+
+.callout {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.6rem;
+	margin: 0 0 1.25rem;
+	text-align: center;
+	font-weight: 700;
+	color: var(--gold-dark);
+	letter-spacing: 0.5px;
+}
+
+/* Only a roll worth naming gets the badge; a plain roll stays blank. */
+.callout.has-result {
+	color: #2b2410;
+	background: linear-gradient(180deg, #fbe7b4, #f3d68d);
+	border: 1px solid var(--gold-dark);
+	border-radius: 999px;
+	padding: 0.4rem 1.4rem;
+	width: fit-content;
+	margin-inline: auto;
+	margin-bottom: 1.25rem;
+	animation: pop 0.35s ease;
+}
+
+@keyframes pop {
+	0%   { transform: scale(0.85); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+/* ---------- Button ---------- */
+
+.actions {
+	text-align: center;
+}
+
+.btn {
+	font-size: 1.05rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-family: inherit;
+	color: #2b2410;
+	background: linear-gradient(180deg, var(--gold), var(--gold-dark));
+	border: none;
+	border-radius: 40px;
+	padding: 0.85rem 2.75rem;
+	cursor: pointer;
+	box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+	transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.btn:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.05);
+	box-shadow: 0 9px 18px rgba(0, 0, 0, 0.25);
+}
+
+.btn:active {
+	transform: translateY(1px);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.btn:focus-visible {
+	outline: 3px solid var(--felt);
+	outline-offset: 3px;
+}
+
+.btn:disabled {
+	cursor: progress;
+	opacity: 0.65;
+	transform: none;
+	filter: none;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.app__footer {
+	margin-top: 1.75rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--rule);
+	text-align: center;
+	font-size: 0.82rem;
+	color: var(--muted);
+}
+
+/* ---------- 3D stage (Three.js + Rapier) ---------- */
+
+.stage {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 8.5;
+	max-height: 430px;
+	margin-bottom: 1.25rem;
+	border-radius: 14px;
+	overflow: hidden;
+	background: radial-gradient(circle at 50% 35%, var(--felt-light), var(--felt-dark));
+	box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45), 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.stage canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+/* When the 3D tray is running, the flat CSS dice are redundant:
+	 keep the headings and the read-only value fields, drop the faces. */
+.has-3d .die-face {
+	display: none;
+}
+
+.has-3d .dice__row {
+	gap: 0.6rem;
+	margin-bottom: 1.25rem;
+}
+
+.has-3d .die-card {
+	padding: 0.55rem 0.5rem;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 640px) {
+	body { padding: 1rem 0.75rem; }
+	.app { padding: 1.25rem; }
+	.dice__row { grid-template-columns: repeat(2, 1fr); }
+	.summary { grid-template-columns: 1fr; }
+	.stage { aspect-ratio: 16 / 11; }
+	.btn { width: 100%; padding: 0.85rem 1rem; }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	.btn:hover { transform: none; }
+}

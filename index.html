@@ -1,152 +1,127 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>TU DiceRol</title>
-	<style>
-		#urlInput {
-            width: 500px; 
-            padding: 10px;
-            font-size: 14px;
-        }
-        #favoritePlacesJSON, #batmanJSON {
-            padding: 20px;
-            background-color: lightgray;
-            margin-top: 20px;
-        }
-		#testingDiv {
-            display: none;
-        }
-    </style>
+<!DOCTYPE html>
+<!--
+	AI use: Claude (Opus 5) drafted this markup — the instructions panel, the five labelled
+	die cards, the summary fields, and the Roll button; reviewed and edited by hand.
+-->
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>Yahtzee Dice Roller</title>
+	<link rel='stylesheet' href='styles.css'>
 </head>
-<body>
-	<h1>The Ultimate Dice Roller</h1>
-	<p>This is an HTML, CSS, and JavaScript MERNa web client. To test your MERNa server, enter your 
-	MERNa sever URL below and press test connection button.</p>
+<body onload='startApp()'>
+	<main class='app'>
+		<header class='app__header'>
+			<h1>Yahtzee Dice Roller</h1>
+			<p class='tagline'>Five six-sided dice, rolled fairly, every time.</p>
+		</header>
 
-	<label for="urlInput">MERNa Server URL:</label><br />
-	<input type="text" id="urlInput" placeholder="Enter the URL of your remote MERNa server here..."><br /><br />
+		<section class='instructions' aria-labelledby='how-to'>
+			<h2 id='how-to'>How to Use</h2>
+			<p>
+				Yahtzee is played with five 6-sided dice. This application rolls all five
+				dice for you and reports the result, so you can play without hunting for
+				physical dice.
+			</p>
+			<ol>
+				<li>The dice roll automatically when the page loads.</li>
+				<li>
+					Press <kbd>Enter</kbd> or click <strong>Roll Dice</strong> to throw all
+					five dice again.
+				</li>
+				<li>
+					Watch them tumble, then read each value below its heading; the totals
+					update on every roll.
+				</li>
+			</ol>
+			<p class='note'>
+				All result fields are read only &mdash; they are filled in by the program using
+				randomly generated numbers between 1 and 6.
+			</p>
+		</section>
 
-	<button onclick="testMERNaServerConnection()">Test MERNa Server Connection</button>
-	<div id="ping"></div><br /><br />
+		<section class='dice' aria-labelledby='results'>
+			<h2 id='results'>Roll Results</h2>
 
-	<script>
-		async function testMERNaServerConnection() {
-			const pingField = document.getElementById("ping");
-			pingField.innerHTML = "";
-			var div = document.getElementById('testingDiv');
-			div.style.display = 'none';
+			<div class='stage' id='stage' hidden></div>
 
-			const url = document.getElementById("urlInput").value + "/api/ping";
-			const response = await fetch(url);
-			const pingResponse = await response.text();
+			<div class='dice__row' id='diceRow'>
+				<div class='die-card'>
+					<label class='die-card__label' for='die1'>Die 1</label>
+					<div class='die-face' id='face1' aria-hidden='true'></div>
+					<input class='die-card__value' type='text' id='die1' name='die1' value='' readonly>
+				</div>
+				<div class='die-card'>
+					<label class='die-card__label' for='die2'>Die 2</label>
+					<div class='die-face' id='face2' aria-hidden='true'></div>
+					<input class='die-card__value' type='text' id='die2' name='die2' value='' readonly>
+				</div>
+				<div class='die-card'>
+					<label class='die-card__label' for='die3'>Die 3</label>
+					<div class='die-face' id='face3' aria-hidden='true'></div>
+					<input class='die-card__value' type='text' id='die3' name='die3' value='' readonly>
+				</div>
+				<div class='die-card'>
+					<label class='die-card__label' for='die4'>Die 4</label>
+					<div class='die-face' id='face4' aria-hidden='true'></div>
+					<input class='die-card__value' type='text' id='die4' name='die4' value='' readonly>
+				</div>
+				<div class='die-card'>
+					<label class='die-card__label' for='die5'>Die 5</label>
+					<div class='die-face' id='face5' aria-hidden='true'></div>
+					<input class='die-card__value' type='text' id='die5' name='die5' value='' readonly>
+				</div>
+			</div>
 
-			if (pingResponse === 'ping response') {
-				pingField.innerHTML = "Success!";
-				var div = document.getElementById('testingDiv');
-				div.style.display = 'block';
-			} 
-		}
-	</script>
+			<div class='summary'>
+				<div class='summary__item'>
+					<label for='total'>Total of Dice</label>
+					<input type='text' id='total' name='total' value='' readonly>
+				</div>
+				<div class='summary__item'>
+					<label for='highest'>Highest Die</label>
+					<input type='text' id='highest' name='highest' value='' readonly>
+				</div>
+				<div class='summary__item'>
+					<label for='rollCount'>Rolls This Session</label>
+					<input type='text' id='rollCount' name='rollCount' value='' readonly>
+				</div>
+			</div>
 
-	<div id="testingDiv">
-		<button type="button" onclick="fetchAbout()">Fetch About</button>
-		<div id="fetch-about-result"></div>
-		<br><br>
+			<p class='callout' id='callout' role='status'>&nbsp;</p>
 
-		<button type="button" onclick="fetch2Plus2()">Fetch 2plus2</button>
-		<div id="fetch-2plus2-result"></div>
-		<br><br>
+			<div class='actions'>
+				<button type='button' id='rollButton' class='btn' autofocus onclick='rollDice()'>
+					Roll Dice
+				</button>
+			</div>
+		</section>
 
-		Add two integers on the Node.js server.<br />
-		<select onchange="addTwoIntegers()" id="x-value">
-			<option>1</option>
-			<option>2</option>
-			<option>3</option>
-			<option>100</option>
-		</select> +
+		<section class='cors-demo' aria-labelledby='cors-heading'>
+			<h2 id='cors-heading'>CORS Failure Demo</h2>
+			<p>
+				The dice come from <code>/random-num</code>, which sends an
+				<code>Access-Control-Allow-Origin</code> header, so the browser lets this page read
+				it. <code>/api/no-cors</code> on the same server sends no such header, so the
+				browser blocks the response.
+			</p>
+			<div class='actions'>
+				<button type='button' class='btn btn--secondary' onclick='demonstrateCorsFailure()'>
+					Trigger CORS Failure
+				</button>
+			</div>
+			<p class='cors-demo__result' id='corsResult' role='status'>&nbsp;</p>
+		</section>
 
-		<select onchange="addTwoIntegers()" id="y-value">
-			<option>1</option>
-			<option>2</option>
-			<option>3</option>
-			<option>100</option>
-		</select> = 
-		<input id="sum" disabled></input><br /><br /><br />
+		<footer class='app__footer'>
+			<p>Random values produced by the remote Node.js server's <code>/random-num</code> API.</p>
+		</footer>
+	</main>
 
-		<button type="button" onclick="calculateBMI()">Calculate BMI</button>
-		<div id="bmi-result"></div>
-		<br><br>
-
-		<script>
-			let fetchAboutCounter = 0
-			async function fetchAbout() {
-				fetchAboutCounter++
-				const url = document.getElementById("urlInput").value + "/about";
-				const response = await fetch(url)
-				const responseText = await response.text()
-				document.getElementById("fetch-about-result").innerHTML = responseText + " ("+fetchAboutCounter+")"
-			}
-
-			let fetch2plus2Counter = 0
-			async function fetch2Plus2() {
-				fetch2plus2Counter++
-				const url = document.getElementById("urlInput").value + "/2plus2";
-				const response = await fetch(url)
-				const responseText = await response.text()
-				document.getElementById("fetch-2plus2-result").innerHTML = responseText + " ("+fetch2plus2Counter+")"
-			}
-
-			async function addTwoIntegers() {
-				const x = document.getElementById("x-value").value
-				const y = document.getElementById("y-value").value
-
-				// Note the URL (fetch) string will look something like '/add-two-integers?x=2&y=1' when it is sent.
-				const url = document.getElementById("urlInput").value
-				const fetchString = url+"/add-two-integers?x="+x+"&y="+y
-				const response = await fetch(fetchString)
-				const responseText = await response.text()
-				document.getElementById("sum").value = responseText
-			}
-
-			async function calculateBMI() {
-				// Approximate height and weight for a man in the US. 
-				const url = document.getElementById("urlInput").value;
-				const fetchString = url+'/calculate-bmi?feet=5&inches=10&lbs=186';
-				const response = await fetch(fetchString)
-				const responseText = await response.text()
-				console.log(responseText)
-				document.getElementById("bmi-result").innerHTML = responseText
-			}
-		</script>
-
-		<button onclick="fetchBatman()">Batman</button>
-		<div id="batmanJSON">Batman JSON</div><br /><br />
-		<script>
-			async function fetchBatman() {
-				const url = document.getElementById("urlInput").value + "/batman";
-				const response = await fetch(url);
-				const batmanResponse = await response.json();
-
-				const batmanJSONField = document.getElementById("batmanJSON");
-				const batmanResponseText = "<pre>"+JSON.stringify(batmanResponse, null, 4)+"</pre"
-				batmanJSONField.innerHTML = batmanResponseText
-			}
-		</script>
-
-		<button onclick="testFavoritePlaces()">Favorite Places</button>
-		<div id="favoritePlacesJSON">Favorite Places JSON</div><br /><br />
-		<script>
-			async function testFavoritePlaces() {
-				const url = document.getElementById("urlInput").value + "/api/favorite-places";
-				const response = await fetch(url);
-				const places = await response.json();
-
-				const favoritePlacesJSONField = document.getElementById("favoritePlacesJSON");
-				const favoritePlacesText = "<pre>"+JSON.stringify(places, null, 4)+"</pre"
-				favoritePlacesJSONField.innerHTML = favoritePlacesText
-			}
-		</script>
-	</div>
+	<script src='script.js'></script>
+	<!-- The 3D tray is a progressive enhancement: if this module cannot load,
+			 script.js keeps working with the flat CSS dice. -->
+	<script type='module' src='dice3d.js' onerror='fallbackTo2D()'></script>
 </body>
 </html>
